@@ -18,7 +18,7 @@ This skill provides comprehensive architecture guidelines, prior art benchmarks,
 - **Operational Directives**: [system_prompt.md](./system_prompt.md)  
   Specifies the foundational principles (Complexity Gate, Human Alignment First, Prior Art Research First, Option A Approval Gate via `ask_question`).
 - **Execution Protocol**: [workflow.md](./workflow.md)  
-  The 5-phase SOP: Alignment & Complexity Gate $\rightarrow$ Research $\rightarrow$ Co-Pilot Gate $\rightarrow$ Parallel Generation $\rightarrow$ Independent Audit.
+  The 6-phase SOP: Alignment & Complexity Gate $\rightarrow$ Research $\rightarrow$ Co-Pilot Gate $\rightarrow$ Parallel Generation $\rightarrow$ Independent Audit $\rightarrow$ Retrospective & Self-Evolution.
 
 ---
 
@@ -38,6 +38,9 @@ Read only the reference file mapped to your current workflow phase:
 - **Phase 5 (Independent Audit & QA)**:  
   [Agent Evaluation & Rubrics](./references/evaluation-rubric.md)  
   LLM-as-a-judge rubrics (G-Eval style), tool least-privilege matrix, static schema validation, and Remediation Circuit Breaker (max 2 cycles).
+- **Phase 6 (Retrospective & Continuous Self-Evolution)**:  
+  [Retrospective & Continuous Self-Evolution Guide](./references/retrospective-and-self-evolution.md)  
+  Metacognition and learning flywheel based on Reflexion (rule ingestion) and Voyager (skill accumulation), with strict human gates for prompt mutation.
 
 ---
 
@@ -48,3 +51,4 @@ Read only the reference file mapped to your current workflow phase:
 3. **Step 3 — Option A Approval Gate**: Propose the architectural blueprint (Roles, Models, Tools, File Tree) and obtain user confirmation via `ask_question`.
 4. **Step 4 — Parallel Authoring**: Delegate persona generation to `prompt-persona-engineer` and skill runbooks to `skill-workflow-designer`.
 5. **Step 5 — Independent QA Audit**: Verify schemas, links, and permissions via `agent-auditor-validator` (strictly read-only; max 2 remediation cycles).
+6. **Step 6 — Retrospective & Self-Evolution**: Harvest lessons learned into `.agents/rules/` and scaffold reusable skills to prevent regression and continuously upgrade squad intelligence.

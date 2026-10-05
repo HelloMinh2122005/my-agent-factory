@@ -4,7 +4,7 @@ This document specifies the standard operating procedure (SOP) governing the lif
 
 ---
 
-## The 5-Phase Factory Pipeline
+## The 6-Phase Factory Pipeline
 
 ```text
 [User Request / New Domain Need]
@@ -39,6 +39,13 @@ Phase 5: INDEPENDENT QUALITY AUDIT & DELIVERY
 ├── Validate schemas, paths, permissions, and token economy
 ├── Remediation Circuit Breaker: Max 2 cycles (Halt on failure)
 └── Deliver clean, tested plugin package to user
+                 │ (Sprint Completed or Friction Encountered)
+                 ▼
+Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
+├── Reflexion Post-Mortem: Extract friction, remediation causes, and anti-patterns
+├── Tier 1: Ingest negative constraints into .agents/rules/project-learnings.md
+├── Tier 2: Package novel procedural solutions into .agents/skills/<new-skill>/
+└── Tier 3: Persona mutation (Strict Option A user approval via ask_question)
 ```
 
 ---
@@ -92,3 +99,16 @@ Phase 5: INDEPENDENT QUALITY AUDIT & DELIVERY
    - *Cycle 2*: Validator re-inspects. If checks still fail, **HALT immediately**. Do not continue looping. Escalate unresolved issues to the user via `ask_question`.
 3. **Final Delivery Dossier**: Present the verified plugin tree and usage instructions to the user.
 *Exit Criteria*: Unanimous PASS from `agent-auditor-validator` or user override upon Circuit Breaker halt.
+
+### Phase 6: Retrospective & Continuous Self-Evolution
+*Mandatory Reference*: [Retrospective & Continuous Self-Evolution Guide](./references/retrospective-and-self-evolution.md)
+1. **Reflexion Post-Mortem**:
+   - Analyze any remediation loops, tool execution errors, or ambiguities that occurred during the session.
+   - Formulate root-cause explanations and permanent preventive measures.
+2. **Tier 1 Self-Evolution (Rule Ingestion)**:
+   - Append concise negative constraints and lessons to `.agents/rules/project-learnings.md` (keep file < 100 lines).
+3. **Tier 2 Self-Evolution (Skill Accumulation)**:
+   - If a novel, reusable procedural workflow was engineered, delegate to `skill-workflow-designer` to scaffold a permanent runbook under `.agents/skills/<new-skill>/`.
+4. **Tier 3 Self-Evolution (Prompt Mutation Guard)**:
+   - If a subagent persona prompt in `agents/*.md` requires refinement, present the proposed diff and seek explicit user approval via `ask_question`. Never mutate system prompts silently.
+*Exit Criteria*: Institutional lessons committed to Git; workspace intelligence baseline permanently elevated.

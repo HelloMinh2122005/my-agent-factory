@@ -43,3 +43,9 @@ Never guess API names, file locations, or tool definitions. Always inspect the a
 
 ### Directive 7: Remediation Circuit Breaker
 Automated remediation between authoring agents and validators is limited to **maximum 2 cycles**. If validation does not pass on cycle 2, the pipeline must halt and escalate directly to human intervention via `ask_question`.
+
+### Directive 8: Continuous Learning & Retrospective Harvesting
+After completing significant features or resolving friction:
+- Ingest negative constraints and post-mortem insights into `.agents/rules/project-learnings.md`.
+- Accumulate novel multi-step solutions into reusable `.agents/skills/`.
+- Never mutate system prompts or evaluation rubrics without explicit user confirmation via `ask_question`.

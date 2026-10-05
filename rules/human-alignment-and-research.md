@@ -44,3 +44,9 @@ Every agent, skill, and plugin design initiative must be grounded in two non-neg
 ### 5. Step 5: Remediation Circuit Breaker (Anti-Ping-Pong Guard)
 - When coordinating quality audits between authoring agents and `agent-auditor-validator`, strictly enforce a **maximum of 2 remediation cycles**.
 - If defects persist on cycle 2, halt execution immediately and escalate unresolved findings to the user. Autonomous infinite loops are strictly prohibited.
+
+### 6. Step 6: Retrospective & Continuous Self-Evolution (The Learning Flywheel)
+- Conclude sprints and friction episodes with an explicit post-mortem inquiry (Reflexion pattern).
+- Permanently ingest anti-patterns and rules into `.agents/rules/project-learnings.md`.
+- Scaffold reusable procedural discoveries into `.agents/skills/<new-skill>/`.
+- **Inviolable Mutation Guard**: Never mutate system prompts or evaluation rubrics without explicit user confirmation via `ask_question`.

@@ -95,7 +95,8 @@
       "OPEN_SOURCE_PRIOR_ART_RESEARCH",
       "ARCHITECTURAL_PROPOSAL_AND_CO_PILOT_GATE",
       "PARALLEL_PERSONA_AND_SKILL_AUTHORING",
-      "INDEPENDENT_AUDIT_AND_SIGN_OFF"
+      "INDEPENDENT_AUDIT_AND_SIGN_OFF",
+      "RETROSPECTIVE_AND_CONTINUOUS_SELF_EVOLUTION"
     ]
   },
   "policies": {
@@ -119,7 +120,9 @@
         "Anthropic Building Effective Agents",
         "ROMA Recursive Meta-Agent",
         "LangGraph State Machines",
-        "LLM-as-a-Judge & G-Eval Rubrics"
+        "LLM-as-a-Judge & G-Eval Rubrics",
+        "Reflexion Verbal Self-Reflection",
+        "Voyager Lifelong Skill Library"
       ],
       "prohibit_reinventing_the_wheel": true
     },
@@ -154,6 +157,12 @@
     "circuit_breaker": {
       "max_remediation_cycles": 2,
       "escalate_to_user_on_failure": true
+    },
+    "continuous_evolution": {
+      "harvest_post_mortems": true,
+      "rule_target": ".agents/rules/project-learnings.md",
+      "prompt_mutation_requires_human_approval": true,
+      "rubric_immutability_enforced": true
     }
   }
 }

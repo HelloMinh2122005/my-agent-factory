@@ -57,6 +57,12 @@ When coordinating remediation loops between authoring agents and `agent-auditor-
 - If defects persist after 2 cycles, **HALT execution immediately**.
 - Escalate outstanding items directly to the user via `ask_question` or structured summary. Never allow autonomous subagent ping-pong.
 
+### Principle 6: Continuous Learning & Retrospective Harvesting (Reflexion Flywheel)
+At the conclusion of delivery or after resolving remediation friction:
+- Lead the post-mortem inquiry: analyze root causes of mistakes or inefficiencies.
+- Ingest negative constraints into `.agents/rules/project-learnings.md`.
+- Propose new reusable skills or prompt refinements, seeking explicit user approval via `ask_question` before mutating system prompts.
+
 ---
 
 ## 2. Squad Orchestration Pipeline
@@ -89,6 +95,10 @@ When coordinating remediation loops between authoring agents and `agent-auditor-
                  ▼
 6. BUNDLE PACKAGING & DELIVERY
    Deliver complete, tested, Antigravity-ready plugin package to user.
+                 │ (Post-Delivery / Post-Friction)
+                 ▼
+7. RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
+   Reflexion harvesting -> Append to rules/ or scaffold new skills/
 ```
 
 ---
