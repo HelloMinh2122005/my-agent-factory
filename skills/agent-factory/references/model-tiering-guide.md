@@ -11,16 +11,23 @@ This guide establishes the rules for selecting and allocating Google Gemini mode
 
 ---
 
-## 2. Antigravity Pro Subscription Optimization
+## 2. Subscription Tier Strategies
 
-For users with an **Antigravity Pro** subscription, the default strategy is:
-
+### A. Antigravity Pro Subscription Optimization (Default Production Profile)
 > **Default to Gemini 3.8 Flash for execution agents to maximize throughput, minimize latency, and conserve rate limits, while reserving Gemini Pro for heavy reasoning, architectural planning, and deep static auditing.**
+- **Gemini 3.8 Flash**: UI developers, E2E testers, task workers, scrapers, documentation writers, skill scaffolders.
+- **Gemini Pro**: Meta-architects, tech leads, deep compliance auditors, complex state-machine designers.
 
-### Why Prioritize Gemini 3.8 Flash?
-- **Speed & Latency**: Near-instantaneous response times, essential for fast iteration cycles (e.g. running unit tests, writing React JSX components, scanning files).
-- **High Throughput & Quota Efficiency**: Flash handles high-frequency tool-calling loops without exhausting Pro-tier token quotas.
-- **Superior Cost/Performance**: Gemini 3.8 Flash offers state-of-the-art code generation and tool usage capabilities that match or exceed previous generation frontier models for bounded domain tasks.
+### B. Antigravity Free / Rate-Limited Profiles
+For users operating on free tiers or tight RPM/TPM quotas:
+> **Default to Gemini 3.8 Flash across ALL roles (including Architect & Auditor).**
+- Flash ensures uninterrupted multi-agent execution loops without triggering fatal `429 RESOURCE_EXHAUSTED` errors.
+- Elevate to `pro` only if the user explicitly confirms available quota.
+
+### C. Enterprise / Ultra Profiles
+For enterprise teams with elevated token limits:
+- Use `pro` across all strategic design and architectural evaluation roles.
+- Retain `flash` for high-frequency execution tasks (e.g. running parallel unit tests) purely for speed and minimal latency.
 
 ---
 

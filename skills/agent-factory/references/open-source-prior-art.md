@@ -50,7 +50,15 @@ Anthropic's research emphasizes that the most robust agentic systems use simple,
 
 ### Key Rules from Anthropic:
 - **Workflows vs Agents**: Use deterministic workflows (code-directed) for predictable sequential pipelines; use autonomous agents (LLM-directed tool use) only when dynamic decision-making is necessary.
-- **Start Simple**: Always benchmark a single well-prompted model call before adding multi-agent complexity. Only introduce subagents when demonstrable benefits emerge.
+- **Start Simple (Complexity Gate)**: Always benchmark a single well-prompted model call before adding multi-agent complexity. Only introduce subagents when demonstrable benefits emerge.
+
+#### Complexity Gate Decision Matrix:
+| Domain Need | Recommended Architecture | Overhead / Cost |
+| :--- | :--- | :--- |
+| Single-turn constraint, styling rule | **Antigravity Rule** (`rules/*.md`) | Minimal context overhead |
+| Multi-step runbook, tool execution guide | **Antigravity Skill** (`skills/<name>/`) | On-demand progressive disclosure |
+| Focused feature (Coder + Tester) | **1 Specialist Agent + 1 Tester** | Low-latency, tight iteration |
+| Broad enterprise domain (PRD $\rightarrow$ Arch $\rightarrow$ Code $\rightarrow$ QA) | **Full Multi-Agent Squad** (3-5 Personas) | High reasoning depth |
 
 ---
 
@@ -63,17 +71,22 @@ Anthropic's research emphasizes that the most robust agentic systems use simple,
 ### LangGraph & State Machines
 - Treats multi-agent workflows as stateful cyclic graphs.
 - **Human-in-the-Loop Checkpoints**: Formalizes gates where execution pauses and requests human validation before state transitions occur (directly inspiring our **Option A Co-Pilot Gate**).
+- **Circuit Breaker Pattern**: Sets explicit limits on cyclic transitions to prevent infinite remediation loops.
 
 ---
 
-## 4. DSPy & LLM-as-a-Judge: Trajectory Evaluation
+## 4. Evaluator-Optimizer & Trajectory Evaluation (G-Eval / DSPy)
 
-### The 4-Part Evaluation Rubric:
+### DSPy vs LLM-as-a-Judge: Technical Distinction
+- **DSPy (Stanford NLP)**: Programmatic framework for compiling prompts, selecting demonstrations, and optimizing weights against metric assertions (`BootstrapFewShot`, `MIPROv2`). Used when systematically tuning agent prompts against ground-truth datasets.
+- **LLM-as-a-Judge & G-Eval (Liu et al.)**: Evaluative framework using a separate reasoning model to score agent outputs against a multi-dimensional rubric with Chain-of-Thought verification.
+
+### The 4-Part Evaluation Rubric (G-Eval Style):
 When auditing agents, avoid subjective, binary assessments ("good" or "bad"). Implement a rigorous 4-part evaluation rubric:
-1. **Criterion Definition**: Define the exact metric (e.g. "Schema Validity", "Tool Least-Privilege", "Link Integrity").
-2. **Explicit Reasoning Structure**: Require Chain-of-Thought analysis before scoring.
-3. **Deterministic Scoring Rule**: Map findings directly to scores (e.g. 1 broken link = automatic FAIL).
-4. **Edge Case Clause**: Explicitly handle corner cases (e.g. empty tool output, missing documentation).
+1. **Criterion Definition**: Define the exact metric (e.g. "YAML Frontmatter Validity", "Tool Least-Privilege", "Relative Link Integrity").
+2. **Explicit Reasoning Structure**: Require step-by-step Chain-of-Thought analysis before rendering a decision.
+3. **Deterministic Scoring Rule**: Map findings directly to scores (e.g. 1 broken link or excess destructive tool = automatic FAIL).
+4. **Edge Case Clause**: Explicitly handle corner cases (e.g. missing templates, empty responses, dangling cross-references).
 
 ### Trajectory Evaluation:
 Grade the complete trajectory of the agent:

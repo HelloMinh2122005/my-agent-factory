@@ -1,9 +1,8 @@
 {
-  "$schema": "https://antigravity.google/schemas/agent-skill-config.v1.json",
   "name": "agent-factory",
   "version": "1.0.0",
-  "description": "Meta-Agent engineering and squad generation skill for Google Antigravity. Architect, research, design, and validate enterprise-grade AI agents, skills, and plugins.",
-  "type": "meta-agent-skill",
+  "description": "Internal factory specification and policy manifest for Antigravity meta-agent engineering. Note: Antigravity engine loads skills progressively via SKILL.md frontmatter.",
+  "type": "meta-agent-skill-manifest",
   "triggers": {
     "intent": [
       "create_new_agent",
@@ -29,7 +28,6 @@
     "file_patterns": [
       ".agents/**/*.md",
       ".agents/**/plugin.json",
-      ".agents/**/config.json",
       "plugins/**/*.md",
       "plugins/**/plugin.json",
       "skills/**/SKILL.md"
@@ -41,12 +39,10 @@
       "definition": "agents/meta-agent-architect.md",
       "model": "pro",
       "tools": [
+        "ask_question",
         "search_web",
         "read_url_content",
         "view_file",
-        "write_to_file",
-        "replace_file_content",
-        "run_command",
         "grep_search",
         "list_dir"
       ]
@@ -84,17 +80,18 @@
       "tools": [
         "view_file",
         "grep_search",
-        "run_command",
         "list_dir"
       ]
     }
   },
   "orchestration": {
     "protocol": "meta_agent_factory_pipeline",
+    "complexity_gate_mandatory": true,
     "co_pilot_approval_gate_mandatory": true,
     "research_first_mandatory": true,
+    "circuit_breaker_max_cycles": 2,
     "phases": [
-      "USER_ALIGNMENT_AND_INTENT_EXTRACTION",
+      "USER_ALIGNMENT_AND_COMPLEXITY_GATE",
       "OPEN_SOURCE_PRIOR_ART_RESEARCH",
       "ARCHITECTURAL_PROPOSAL_AND_CO_PILOT_GATE",
       "PARALLEL_PERSONA_AND_SKILL_AUTHORING",
@@ -102,10 +99,18 @@
     ]
   },
   "policies": {
+    "complexity_gate": {
+      "start_simple_first": true,
+      "triage": {
+        "low_complexity": "single_rule_or_skill",
+        "medium_complexity": "single_agent_plus_tester",
+        "high_complexity": "full_multi_agent_squad"
+      }
+    },
     "human_alignment": {
       "step_1_required": true,
       "no_premature_generation": true,
-      "ask_clarifying_questions": true
+      "use_ask_question_tool": true
     },
     "prior_art_research": {
       "step_2_required": true,
@@ -114,12 +119,13 @@
         "Anthropic Building Effective Agents",
         "ROMA Recursive Meta-Agent",
         "LangGraph State Machines",
-        "DSPy & Trajectory Evaluation"
+        "LLM-as-a-Judge & G-Eval Rubrics"
       ],
       "prohibit_reinventing_the_wheel": true
     },
     "co_pilot_gate": {
       "option_a_enforced": true,
+      "modal_approval_via_ask_question": true,
       "await_user_approval": true
     },
     "model_selection": {
@@ -128,14 +134,26 @@
         "antigravity_pro": {
           "execution_agents": "gemini-3.8-flash",
           "reasoning_and_auditing_agents": "gemini-pro"
+        },
+        "antigravity_free_or_rate_limited": {
+          "all_agents": "gemini-3.8-flash"
+        },
+        "enterprise_ultra": {
+          "critical_paths": "gemini-pro",
+          "execution_agents": "gemini-3.8-flash"
         }
       }
     },
     "security_and_hygiene": {
       "least_privilege_enforced": true,
       "auditors_read_only_strictly": true,
+      "auditors_forbidden_tools": ["write_to_file", "replace_file_content", "run_command"],
       "no_machine_local_paths": true,
       "progressive_disclosure_enforced": true
+    },
+    "circuit_breaker": {
+      "max_remediation_cycles": 2,
+      "escalate_to_user_on_failure": true
     }
   }
 }

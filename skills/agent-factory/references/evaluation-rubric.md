@@ -1,6 +1,6 @@
 # Agent Evaluation Rubrics & Compliance Testing Guide
 
-This reference provides the formal evaluation criteria used by `agent-auditor-validator` and LLM judges to grade newly generated agents, skills, and plugins.
+This reference provides the formal evaluation criteria used by `agent-auditor-validator` and LLM judges (following the G-Eval 4-part rubric pattern) to grade newly generated agents, skills, and plugins.
 
 ---
 
@@ -10,7 +10,7 @@ When evaluating an agent's definition, never rely on subjective impression. Exec
 
 1. **Criterion Definition**: Define the exact metric using domain terminology:
    - `YAML_COMPLIANCE`: Conformance to Antigravity frontmatter specification.
-   - `LEAST_PRIVILEGE`: Strict alignment of tool permissions to role necessity.
+   - `LEAST_PRIVILEGE`: Strict alignment of tool permissions to role necessity (strictly zero write or shell tools for reviewers).
    - `LINK_INTEGRITY`: 100% resolution of relative paths without dangling references.
    - `PROGRESSIVE_DISCLOSURE`: Context efficiency through separation of `SKILL.md` and `references/`.
    - `ZERO_GUESS_CLAUSE`: Inclusion of verification protocols and anti-hallucination constraints.
@@ -18,9 +18,9 @@ When evaluating an agent's definition, never rely on subjective impression. Exec
    - Perform step-by-step verification of each criterion before producing a score.
 3. **Deterministic Scoring Rule**:
    - Every criterion is graded **PASS** (1) or **FAIL** (0).
-   - Any single **FAIL** results in an overall **REMEDIATION_REQUIRED** verdict.
+   - Any single **FAIL** results in an overall **REMEDIATION_REQUIRED** verdict (or **HALT_REMEDIATION** if at cycle 2).
 4. **Edge Case Clause**:
-   - Flag any undefined variables, missing subagent targets in `config.json`, or local machine-specific absolute paths (e.g. `file:///path/to/...`).
+   - Flag any undefined variables, missing subagent targets, hallucinated engine schemas, or local machine-specific absolute paths (e.g. `file:///path/to/...`).
 
 ---
 
@@ -33,11 +33,11 @@ When evaluating an agent's definition, never rely on subjective impression. Exec
 | **Frontmatter** | `model` attribute | Explicitly set to `pro` or `flash`. | Major |
 | **Frontmatter** | `subagent` attribute | Must be boolean `true`. | Blocker |
 | **Frontmatter** | `tools` list | Explicit array of valid Antigravity tools only. | Blocker |
-| **Tool Security** | Least-Privilege Check | Auditor/Reviewer roles have NO write tools. | Blocker |
+| **Tool Security** | Least-Privilege Check | Auditor/Reviewer roles have NO write tools (`write_to_file`, `replace_file_content`) and NO shell tools (`run_command`). | Blocker |
 | **File Integrity** | Relative Paths | Every Markdown link points to a real file. | Blocker |
 | **File Integrity** | No Absolute Paths | Zero `file:///path/to/...` or machine-local paths. | Major |
 | **Token Economy**| Progressive Disclosure | `SKILL.md` < 150 lines; deep docs in `references/`. | Minor |
-| **JSON Schemas** | Syntax & Structure | `plugin.json` and `config.json` parse without error. | Blocker |
+| **JSON Schemas** | Syntax & Structure | `plugin.json` parses cleanly without hallucinated schemas. | Blocker |
 
 ---
 
@@ -48,3 +48,4 @@ When testing a squad's execution trajectory:
 2. **Boundary Enforcement**: Did any worker attempt to execute tasks assigned to another specialist?
 3. **Independent Gatekeeping**: Did the Tech Lead or Validator enforce a real gate, or did they rubber-stamp unverified deliverables?
 4. **Remediation Loop**: When a defect was reported, did the author remediate specifically to green, or did it introduce regressions?
+5. **Circuit Breaker Adherence**: Was remediation strictly halted after 2 cycles upon persistent defect detection?

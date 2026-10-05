@@ -11,28 +11,33 @@
 
 ## 1. Core Operating Philosophy
 
-Instead of manually drafting prompts and guessing directory structures, the Agent Factory operates on five non-negotiable engineering principles:
+Instead of manually drafting prompts and guessing directory structures, the Agent Factory operates on six non-negotiable engineering principles:
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 1. DEEP USER UNDERSTANDING (Step 1)                                         │
-│    Comprehend real operational domain constraints before designing.         │
+│ 1. DEEP USER UNDERSTANDING & COMPLEXITY GATE (Step 1)                       │
+│    Comprehend domain constraints. Apply Anthropic Rule #1 ("Start Simple"): │
+│    Single Rule vs Single Skill vs Multi-Agent Squad before authoring code.  │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 2. STAND ON THE SHOULDERS OF GIANTS (Step 2 - Never Reinvent the Wheel)     │
 │    Synthesize battle-tested open-source architectures (MetaGPT SOPs,        │
-│    Anthropic Agent Patterns, ROMA, LangGraph State Machines, DSPy Evals).   │
+│    Anthropic Patterns, ROMA, LangGraph State Machines, G-Eval Rubrics).     │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 3. INTERACTIVE CO-PILOT APPROVAL GATE (Option A)                            │
-│    Always propose the complete Architectural Blueprint (Roles, Models,      │
-│    Tools, Hierarchy) to the user and await explicit confirmation.           │
+│ 3. INTERACTIVE CO-PILOT APPROVAL GATE (Option A via ask_question)           │
+│    Propose Architectural Blueprint (Roles, Models, Tools, Directory Tree)   │
+│    via interactive modal and await explicit user confirmation.              │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 4. SUBSCRIPTION-AWARE MODEL SELECTION                                       │
 │    Proactively ask user; default to Gemini 3.8 Flash for execution agents   │
 │    to optimize throughput, latency, and rate limits on Antigravity Pro.     │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 5. INDEPENDENT DUAL QA AUDIT                                                │
-│    Enforce read-only validator inspection for YAML frontmatter, JSON        │
-│    schemas, least-privilege tool security, and path integrity.              │
+│ 5. PRINCIPLE OF LEAST PRIVILEGE                                             │
+│    Enforce strict tool boundary isolation: Auditors have ZERO write or shell│
+│    tools; Architects focus on pure planning and research orchestration.     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 6. REMEDIATION CIRCUIT BREAKER (Max 2 Cycles)                               │
+│    Strictly halt automated audit ping-pong after 2 cycles to prevent         │
+│    context bloat and infinite loops; escalate unresolved items to user.     │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -44,10 +49,10 @@ The system is powered by four specialized meta-agent personas:
 
 | Agent Persona | Role & Responsibilities | Model Tier | Tool Permissions |
 | :--- | :--- | :--- | :--- |
-| **`@meta-agent-architect`** | **Lead Meta-Architect & Orchestrator**: Ingests user domain needs, conducts open-source research, decomposes domain into single-responsibility roles, determines model tiering, enforces tool least-privilege, and manages the Option A Co-Pilot approval gate. | `pro` | Web Search, Inspection, Code Tools |
-| **`@prompt-persona-engineer`** | **Persona & Behavior Specialist**: Drafts high-density system prompts, mental models, inviolable directives, edge-case mitigation protocols, and deterministic output contracts. | `pro` | Code & Filesystem Tools |
-| **`@skill-workflow-designer`** | **Skill & Workflow Specialist**: Packages domain knowledge into Antigravity `skills/` using progressive disclosure (`SKILL.md` + modular `references/`), authors SOP `workflow.md`, and configures `config.json`. | `flash` *(Pro-tier default)* | Code & Filesystem Tools |
-| **`@agent-auditor-validator`** | **Independent QA & Compliance Inspector**: Validates YAML frontmatter, checks JSON schemas (`plugin.json`, `config.json`), enforces least-privilege tool security, and verifies relative link integrity. Strictly read-only to prevent cognitive bias. | `pro` | Read-Only Inspection Tools |
+| **`@meta-agent-architect`** | **Lead Meta-Architect & Orchestrator**: Ingests user domain needs, assesses complexity triage, conducts open-source research, decomposes domain into single-responsibility roles, determines model tiering, and manages the interactive Co-Pilot approval gate. | `pro` | Interactive UI (`ask_question`), Web Search, Inspection Tools *(Strictly zero code-write)* |
+| **`@prompt-persona-engineer`** | **Persona & Behavior Specialist**: Drafts high-density system prompts, mental models, inviolable directives, edge-case mitigation protocols, and deterministic output contracts. | `pro` | Code & Filesystem Authoring Tools |
+| **`@skill-workflow-designer`** | **Skill & Workflow Specialist**: Packages domain knowledge into Antigravity `skills/` using progressive disclosure (`SKILL.md` + modular `references/`), authors SOP `workflow.md`, and configures internal manifests. | `flash` *(Pro default)* | Code & Filesystem Authoring Tools |
+| **`@agent-auditor-validator`** | **Independent QA & Compliance Inspector**: Validates YAML frontmatter, checks JSON schemas, verifies tool least-privilege, and checks relative link integrity. Strictly read-only to prevent cognitive bias. | `pro` | Inspection Only (`view_file`, `grep_search`, `list_dir`) *(Strictly zero write/bash)* |
 
 ---
 
@@ -57,9 +62,9 @@ The system is powered by four specialized meta-agent personas:
 [User Domain Request / High-Level Need]
                     │
                     ▼
-Phase 1: USER ALIGNMENT & INTENT EXTRACTION
-├── Dissect business objectives & end-user personas
-└── Clarify boundaries & ambiguous constraints
+Phase 1: USER ALIGNMENT & COMPLEXITY GATE (ask_question)
+├── Dissect business objectives & operational constraints
+└── Anthropic Rule #1: Rule vs Skill vs Multi-Agent Squad
                     │
                     ▼
 Phase 2: OPEN-SOURCE PRIOR ART RESEARCH
@@ -68,21 +73,22 @@ Phase 2: OPEN-SOURCE PRIOR ART RESEARCH
 └── Document reusable benchmarks (No wheel-reinvention)
                     │
                     ▼
-Phase 3: ARCHITECTURAL BLUEPRINT & CO-PILOT GATE (Option A)
+Phase 3: ARCHITECTURAL BLUEPRINT & CO-PILOT GATE (Option A via ask_question)
 ├── Formulate role breakdown & single responsibilities
-├── Map model tiering (Gemini 3.8 Flash default for Pro users)
+├── Map model tiering (Gemini 3.8 Flash default for Pro workers)
 ├── Establish tool permission matrix (Least Privilege)
-└── Present to user & AWAIT EXPLICIT APPROVAL
+└── Present interactive modal & AWAIT EXPLICIT APPROVAL
                     │ (User Approval)
                     ▼
 Phase 4: PARALLEL GENERATION & CODIFICATION
 ├── prompt-persona-engineer -> System prompts, YAML frontmatter, mental models
-└── skill-workflow-designer -> SKILL.md, config.json, progressive disclosure
+└── skill-workflow-designer -> SKILL.md, progressive disclosure, references/
                     │
                     ▼
 Phase 5: INDEPENDENT QUALITY AUDIT & DELIVERY
-├── agent-auditor-validator (Read-only inspection)
+├── agent-auditor-validator (Strictly read-only inspection)
 ├── Validate schemas, paths, permissions, and token economy
+├── Remediation Circuit Breaker: Max 2 cycles (Halt on failure)
 └── Deliver clean, tested plugin package to user
 ```
 
@@ -97,25 +103,25 @@ my-agent-factory/
 │
 ├── rules/                         # Workspace-wide rules
 │   ├── verification.md            # Zero-guess policy & path integrity
-│   └── human-alignment-and-research.md # Alignment, research-first & model tiering
+│   └── human-alignment-and-research.md # Alignment, complexity gate, research-first & model tiering
 │
 ├── agents/                        # Specialized Meta-Agent Personas
-│   ├── meta-agent-architect.md    # Lead Architect & Orchestrator
+│   ├── meta-agent-architect.md    # Lead Architect & Orchestrator (ask_question + research)
 │   ├── prompt-persona-engineer.md # Prompt & Persona Author
 │   ├── skill-workflow-designer.md # Skill & Progressive Disclosure Designer
-│   └── agent-auditor-validator.md # Independent QA & Compliance Inspector
+│   └── agent-auditor-validator.md # Independent QA Inspector (pure read-only)
 │
 ├── skills/                        # Packaged Meta-Skills
 │   └── agent-factory/
 │       ├── SKILL.md               # Progressive disclosure entry point
-│       ├── config.json            # Triggers, schemas, policies
-│       ├── workflow.md            # 5-phase SOP lifecycle
+│       ├── config.json            # Internal factory policy manifest
+│       ├── workflow.md            # 5-phase SOP lifecycle with circuit breaker
 │       ├── system_prompt.md       # Operational directives & mental models
-│       └── references/            # Deep architectural references
+│       └── references/            # Deep architectural references (phase-gated)
 │           ├── open-source-prior-art.md   # MetaGPT, Anthropic, ROMA, LangGraph
-│           ├── model-tiering-guide.md     # Subscription-aware model selection
+│           ├── model-tiering-guide.md     # Multi-tier subscription-aware model selection
 │           ├── antigravity-spec-guide.md  # Complete Antigravity specs
-│           └── evaluation-rubric.md       # LLM judge rubrics & compliance matrix
+│           └── evaluation-rubric.md       # G-Eval style rubrics & compliance matrix
 │
 └── templates/                     # Production-ready starter boilerplates
     ├── agent-template.md          # Starter agent manifest with frontmatter
@@ -133,11 +139,12 @@ my-agent-factory/
 You can trigger the squad directly in your IDE chat:
 
 ```text
-@meta-agent-architect: I need a new Antigravity squad for DevOps & CI/CD Kubernetes.
+@meta-agent-architect: I need a new Antigravity capability for DevOps & CI/CD Kubernetes.
 Please follow the 5-phase factory pipeline:
-1. Research existing open-source DevOps agent frameworks.
-2. Present the Architectural Blueprint (Option A) for my approval.
-3. Default to Gemini 3.8 Flash for execution workers.
+1. Assess complexity (Does this need a single skill or full squad?).
+2. Research existing open-source DevOps agent frameworks.
+3. Present the Architectural Blueprint (Option A via ask_question) for my approval.
+4. Default to Gemini 3.8 Flash for execution workers.
 ```
 
 ### B. Installing as a Plugin in Any Project
@@ -154,7 +161,7 @@ To use this factory in any project workspace:
 
 This repository synthesizes foundational principles from:
 * **MetaGPT** (*Hong et al., ICLR 2024*): Standard Operating Procedures ("Code = SOP(Team)").
-* **Anthropic Research**: *Building Effective Agents* (Router, Orchestrator-Workers, Evaluator-Optimizer).
+* **Anthropic Research**: *Building Effective Agents* (Complexity Gate, Router, Orchestrator-Workers, Evaluator-Optimizer).
 * **ROMA** (*Sentient AGI*): Recursive Open Meta-Agent hierarchical decomposition.
 * **LangGraph** (*LangChain*): Cyclic stateful agent architectures & human-in-the-loop checkpointing.
-* **DSPy** (*Stanford NLP*): Trajectory evaluation and programmatic rubric grading.
+* **G-Eval & Trajectory Evaluation** (*Liu et al.*): 4-part deterministic rubrics with chain-of-thought verification.
