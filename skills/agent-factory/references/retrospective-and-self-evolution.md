@@ -87,13 +87,13 @@ At the conclusion of an engineering sprint, feature implementation, or after sur
 
 ## 4. Inviolable Safety Guardrails for Self-Modifying Agents
 
-Self-modifying systems without guardrails suffer from **Prompt Drift**, **Rule Bloat**, and **Security Degradation**. All agents must obey four non-negotiable laws:
+Self-modifying systems without guardrails suffer from **Prompt Drift**, **Rule Bloat**, **Poisoning**, and **Security Degradation**. All agents must obey five non-negotiable laws:
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ GUARDRAIL 1: AUDIT RUBRIC IMMUTABILITY                                      │
-│ Agents are strictly forbidden from modifying evaluation-rubric.md to        │
-│ artificially lower quality bars or pass failed audits.                      │
+│ GUARDRAIL 1: PHYSICAL AUDIT RUBRIC IMMUTABILITY                             │
+│ Agents are strictly forbidden from modifying evaluation-rubric.md. This is  │
+│ physically enforced via Antigravity PreToolUse hook (scripts/protect-rubric)│
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ GUARDRAIL 2: MANDATORY HUMAN GATE FOR PROMPT MUTATIONS                      │
 │ Any modification to agents/*.md system prompts requires explicit Option A   │
@@ -106,6 +106,10 @@ Self-modifying systems without guardrails suffer from **Prompt Drift**, **Rule B
 │ GUARDRAIL 4: RULE COMPACTNESS & ANTI-BLOAT POLICY                           │
 │ Learning rule files must never exceed 100 lines. When reaching capacity,     │
 │ the Architect must consolidate, deduplicate, and prune obsolete entries.   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ GUARDRAIL 5: ANTI-POISONING & CONFLICT RESOLUTION                           │
+│ Prior to appending, verify failure wasn't a transient external outage       │
+│ (HTTP 500/network). Cross-reference existing rules to ensure zero conflicts.│
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -120,6 +124,7 @@ When appending learned lessons, follow this high-density format:
 
 ## [YYYY-MM-DD] Feature / Incident Name
 - **Context**: Brief description of the problem solved or friction encountered.
-- **Root Cause**: Why the agent or developer initially made a mistake.
+- **Root Cause**: Why the agent or developer initially made a mistake (distinguish from transient external outages).
+- **Conflict Check**: Verified non-conflicting with prior rules.
 - **Mandatory Directive**: Inviolable instruction for all future agent invocations (e.g. "NEVER use mock data in components/; always import from api/").
 ```

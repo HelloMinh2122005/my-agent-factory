@@ -52,15 +52,21 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
 
 ## Detailed Phase Breakdown
 
-### Phase 1: User Alignment & Complexity Gate
+### Phase 1: User Alignment & Quantitative Complexity Gate
 *Mandatory Reference*: [Open-Source Prior Art & Foundations](./references/open-source-prior-art.md)
 1. **Analyze User Goal**: Understand what capability the user wants to introduce.
-2. **Apply Complexity Gate (Anthropic "Start Simple" Principle)**:
-   - *Low Complexity*: Recommend a single Antigravity **Rule** (`rules/*.md`) or standalone **Skill** (`skills/<name>/SKILL.md`).
-   - *Medium Complexity*: Recommend **1 Specialist Agent + 1 Tester**.
-   - *High Complexity*: Architect a full **Multi-Agent Squad** (3-5 specialized personas).
-3. **Formulate Clarification Questions**: If requirements are ambiguous, prompt the user via `ask_question`.
-*Exit Criteria*: Clear understanding of scope and confirmation of whether a full squad or single skill is needed.
+2. **Compute Architecture Complexity Score (ACS)**:
+   - *Single linear task or file-scoped rule*: +1 pt
+   - *Multi-step procedure with tools or runbooks*: +2 pts
+   - *Decoupled domain boundaries (Data vs UI vs Testing)*: +3 pts
+   - *Asynchronous / Long-horizon lifecycle or dual sign-off QA*: +4 pts
+3. **Apply Gate Thresholds**:
+   - *Score 1 (Low)*: Recommend a single Antigravity **Rule** (`rules/*.md`).
+   - *Score 2–3 (Low-Medium)*: Recommend a standalone Antigravity **Skill** (`skills/<name>/`).
+   - *Score 4–5 (Medium)*: Recommend **1 Specialist Agent + 1 Tester**.
+   - *Score 6+ (High)*: Architect a full **Multi-Agent Squad** (3-5 specialized personas).
+4. **Formulate Clarification Questions**: If requirements are ambiguous, prompt the user via `ask_question`.
+*Exit Criteria*: Confirmed ACS score, clear scope, and consensus on architectural tier.
 
 ### Phase 2: Open-Source Prior Art Research
 *Mandatory Reference*: [Open-Source Prior Art & Foundations](./references/open-source-prior-art.md)
@@ -69,7 +75,7 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
 3. **Synthesize Findings**: Identify 2-3 standard practices to adopt and document them in the architectural dossier.
 *Exit Criteria*: Established set of reusable open-source benchmarks; zero duplicate wheel-reinvention.
 
-### Phase 3: Architectural Blueprint & Co-Pilot Gate (Option A)
+### Phase 3: Architectural Blueprint, Co-Pilot Gate (Option A) & Blackboard State Persistence
 *Mandatory Reference*: [Subscription-Aware Model Tiering Guide](./references/model-tiering-guide.md)
 1. **Compose Blueprint**:
    - Agent Personas (Name, Role, Responsibilities).
@@ -78,13 +84,28 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
    - Folder Structure: Exact path layout within `plugins/<plugin-name>/`.
 2. **Present to User**: Trigger interactive modal using `ask_question`.
 3. **AWAIT USER APPROVAL**: **Strict Gate**: Do not invoke authoring subagents or write files until the user explicitly confirms the architecture.
-*Exit Criteria*: Explicit user approval of the blueprint via interactive modal or chat confirmation.
+4. **Persist Blackboard & Initialize State**:
+   - The Architect writes the approved blueprint to `.agents/blueprint.md` (or `.agents/blueprint.json`).
+   - The Architect initializes the session state in `.agents/.factory-state.json`:
+     ```json
+     {
+       "session_id": "auto",
+       "current_phase": "PARALLEL_GENERATION",
+       "complexity_score": 6,
+       "remediation_cycle": 0,
+       "max_remediation_cycles": 2,
+       "blueprint_path": ".agents/blueprint.md",
+       "audit_verdict": "PENDING"
+     }
+     ```
+*Exit Criteria*: Explicit user approval of the blueprint via interactive modal and persistent state file initialized on disk.
 
 ### Phase 4: Parallel Codification & Generation
 *Mandatory Reference*: [Antigravity Specification Guide](./references/antigravity-spec-guide.md)
-1. **Delegate Personas**: `prompt-persona-engineer` authors `agents/*.md` with valid YAML frontmatter, mental models, inviolable directives, and output contracts.
-2. **Delegate Skills & Workflows**: `skill-workflow-designer` authors `SKILL.md`, `workflow.md`, and modular documentation in `references/`.
-3. **Package Manifests**: Generate `plugin.json` and contextual `rules/`.
+1. **Read Blackboard**: Downstream agents read `.agents/blueprint.md` from disk as the single source of truth.
+2. **Delegate Personas**: `prompt-persona-engineer` authors `agents/*.md` with valid YAML frontmatter, mental models, inviolable directives, and output contracts.
+3. **Delegate Skills & Workflows**: `skill-workflow-designer` authors `SKILL.md`, `workflow.md`, and modular documentation in `references/`.
+4. **Package Manifests**: Generate `plugin.json` and contextual `rules/`.
 *Exit Criteria*: All files generated and conforming to Antigravity file conventions.
 
 ### Phase 5: Independent QA Audit & Delivery
@@ -94,9 +115,11 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
    - JSON syntax and schema compliance in `plugin.json`.
    - Tool permissions compliance (no excess tools, reviewers strictly read-only).
    - Relative path integrity across all Markdown links.
-2. **Remediation Circuit Breaker (Max 2 Cycles)**:
+   - Rubric immutability verification (ensuring `evaluation-rubric.md` is untouched).
+2. **State-Tracked Remediation Circuit Breaker (Max 2 Cycles)**:
+   - Read and increment `remediation_cycle` in `.agents/.factory-state.json`.
    - *Cycle 1*: Authoring agents remediate reported deficiencies.
-   - *Cycle 2*: Validator re-inspects. If checks still fail, **HALT immediately**. Do not continue looping. Escalate unresolved issues to the user via `ask_question`.
+   - *Cycle 2*: Validator re-inspects. If checks still fail (`remediation_cycle >= 2`), **HALT immediately** (`HALT_REMEDIATION`). Do not continue looping. Escalate unresolved issues to the user via `ask_question`.
 3. **Final Delivery Dossier**: Present the verified plugin tree and usage instructions to the user.
 *Exit Criteria*: Unanimous PASS from `agent-auditor-validator` or user override upon Circuit Breaker halt.
 
@@ -105,8 +128,9 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
 1. **Reflexion Post-Mortem**:
    - Analyze any remediation loops, tool execution errors, or ambiguities that occurred during the session.
    - Formulate root-cause explanations and permanent preventive measures.
-2. **Tier 1 Self-Evolution (Rule Ingestion)**:
-   - Append concise negative constraints and lessons to `.agents/rules/project-learnings.md` (keep file < 100 lines).
+2. **Tier 1 Self-Evolution (Conflict-Checked Rule Ingestion)**:
+   - Check proposed directive against existing rules in `.agents/rules/project-learnings.md` to prevent semantic contradictions.
+   - Append concise negative constraint to `.agents/rules/project-learnings.md` (keep file < 100 lines; prune/consolidate if at capacity).
 3. **Tier 2 Self-Evolution (Skill Accumulation)**:
    - If a novel, reusable procedural workflow was engineered, delegate to `skill-workflow-designer` to scaffold a permanent runbook under `.agents/skills/<new-skill>/`.
 4. **Tier 3 Self-Evolution (Prompt Mutation Guard)**:

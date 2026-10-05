@@ -14,11 +14,11 @@ This skill provides comprehensive architecture guidelines, prior art benchmarks,
 ## 1. Skill Specifications & Manifests
 
 - **Internal Policy Manifest**: [config.json](./config.json)  
-  Defines internal factory policies, role permissions, complexity triage, and circuit breaker settings.
+  User-space specification defining factory policies, role permissions, quantitative complexity triage, and circuit breaker settings (consumed dynamically by factory agents; not an Antigravity engine trigger hook).
 - **Operational Directives**: [system_prompt.md](./system_prompt.md)  
   Specifies the foundational principles (Complexity Gate, Human Alignment First, Prior Art Research First, Option A Approval Gate via `ask_question`).
 - **Execution Protocol**: [workflow.md](./workflow.md)  
-  The 6-phase SOP: Alignment & Complexity Gate $\rightarrow$ Research $\rightarrow$ Co-Pilot Gate $\rightarrow$ Parallel Generation $\rightarrow$ Independent Audit $\rightarrow$ Retrospective & Self-Evolution.
+  The 6-phase SOP: Alignment & Quantitative Complexity Gate $\rightarrow$ Research $\rightarrow$ Co-Pilot Gate & Blackboard Persistence $\rightarrow$ Parallel Generation $\rightarrow$ Independent Audit $\rightarrow$ Retrospective & Self-Evolution.
 
 ---
 

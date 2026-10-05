@@ -1,7 +1,7 @@
 {
   "name": "agent-factory",
   "version": "1.0.0",
-  "description": "Internal factory specification and policy manifest for Antigravity meta-agent engineering. Note: Antigravity engine loads skills progressively via SKILL.md frontmatter.",
+  "description": "Internal factory specification and policy manifest consumed by Agent Factory subagents. Note: Antigravity engine does not execute hooks from this file; Antigravity activates skills progressively via SKILL.md YAML frontmatter.",
   "type": "meta-agent-skill-manifest",
   "triggers": {
     "intent": [
@@ -43,6 +43,8 @@
         "search_web",
         "read_url_content",
         "view_file",
+        "write_to_file",
+        "replace_file_content",
         "grep_search",
         "list_dir"
       ]
@@ -102,10 +104,17 @@
   "policies": {
     "complexity_gate": {
       "start_simple_first": true,
-      "triage": {
-        "low_complexity": "single_rule_or_skill",
-        "medium_complexity": "single_agent_plus_tester",
-        "high_complexity": "full_multi_agent_squad"
+      "scoring_matrix": {
+        "single_linear_task": 1,
+        "multi_step_runbook_with_tools": 2,
+        "decoupled_domain_boundaries": 3,
+        "asynchronous_or_dual_qa_signoff": 4
+      },
+      "thresholds": {
+        "score_1": "single_rule",
+        "score_2_to_3": "standalone_skill",
+        "score_4_to_5": "single_agent_plus_tester",
+        "score_6_plus": "full_multi_agent_squad"
       }
     },
     "human_alignment": {
@@ -129,7 +138,8 @@
     "co_pilot_gate": {
       "option_a_enforced": true,
       "modal_approval_via_ask_question": true,
-      "await_user_approval": true
+      "await_user_approval": true,
+      "persist_blueprint_to_disk": true
     },
     "model_selection": {
       "ask_user_first": true,
@@ -152,15 +162,19 @@
       "auditors_read_only_strictly": true,
       "auditors_forbidden_tools": ["write_to_file", "replace_file_content", "run_command"],
       "no_machine_local_paths": true,
-      "progressive_disclosure_enforced": true
+      "progressive_disclosure_enforced": true,
+      "rubric_immutability_hook_enforced": true
     },
     "circuit_breaker": {
       "max_remediation_cycles": 2,
+      "state_file": ".agents/.factory-state.json",
       "escalate_to_user_on_failure": true
     },
     "continuous_evolution": {
       "harvest_post_mortems": true,
       "rule_target": ".agents/rules/project-learnings.md",
+      "rule_max_lines": 100,
+      "semantic_conflict_check_mandatory": true,
       "prompt_mutation_requires_human_approval": true,
       "rubric_immutability_enforced": true
     }

@@ -53,7 +53,7 @@ The system is powered by four specialized meta-agent personas:
 
 | Agent Persona | Role & Responsibilities | Model Tier | Tool Permissions |
 | :--- | :--- | :--- | :--- |
-| **`@meta-agent-architect`** | **Lead Meta-Architect & Orchestrator**: Ingests user domain needs, assesses complexity triage, conducts open-source research, decomposes domain into single-responsibility roles, determines model tiering, leads Phase 6 retrospectives, and manages the interactive Co-Pilot approval gate. | `pro` | Interactive UI (`ask_question`), Web Search, Inspection Tools *(Strictly zero code-write)* |
+| **`@meta-agent-architect`** | **Lead Meta-Architect & Orchestrator**: Ingests user domain needs, assesses quantitative complexity, conducts open-source research, decomposes domain into single-responsibility roles, determines model tiering, writes the Blueprint and session state to the Blackboard, leads Phase 6 retrospectives, and manages the interactive Co-Pilot approval gate. | `pro` | Interactive UI (`ask_question`), Web Search, Inspection, Blueprint & State Authoring *(Strictly zero application code-write)* |
 | **`@prompt-persona-engineer`** | **Persona & Behavior Specialist**: Drafts high-density system prompts, mental models, inviolable directives, edge-case mitigation protocols, and deterministic output contracts. | `pro` | Code & Filesystem Authoring Tools |
 | **`@skill-workflow-designer`** | **Skill & Workflow Specialist**: Packages domain knowledge into Antigravity `skills/` using progressive disclosure (`SKILL.md` + modular `references/`), authors SOP `workflow.md`, scaffolds harvested skills from retrospectives, and configures internal manifests. | `flash` *(Pro default)* | Code & Filesystem Authoring Tools |
 | **`@agent-auditor-validator`** | **Independent QA & Compliance Inspector**: Validates YAML frontmatter, checks JSON schemas, verifies tool least-privilege, and checks relative link integrity. Strictly read-only to prevent cognitive bias. | `pro` | Inspection Only (`view_file`, `grep_search`, `list_dir`) *(Strictly zero write/bash)* |
@@ -66,9 +66,9 @@ The system is powered by four specialized meta-agent personas:
 [User Domain Request / High-Level Need]
                     │
                     ▼
-Phase 1: USER ALIGNMENT & COMPLEXITY GATE (ask_question)
+Phase 1: USER ALIGNMENT & QUANTITATIVE COMPLEXITY GATE (ask_question)
 ├── Dissect business objectives & operational constraints
-└── Anthropic Rule #1: Rule vs Skill vs Multi-Agent Squad
+└── Anthropic Rule #1 & ACS Score: Rule vs Skill vs Specialist vs Squad
                     │
                     ▼
 Phase 2: OPEN-SOURCE PRIOR ART RESEARCH
@@ -77,11 +77,12 @@ Phase 2: OPEN-SOURCE PRIOR ART RESEARCH
 └── Document reusable benchmarks (No wheel-reinvention)
                     │
                     ▼
-Phase 3: ARCHITECTURAL BLUEPRINT & CO-PILOT GATE (Option A via ask_question)
+Phase 3: ARCHITECTURAL BLUEPRINT, CO-PILOT GATE & BLACKBOARD PERSISTENCE
 ├── Formulate role breakdown & single responsibilities
 ├── Map model tiering (Gemini 3.8 Flash default for Pro workers)
 ├── Establish tool permission matrix (Least Privilege)
-└── Present interactive modal & AWAIT EXPLICIT APPROVAL
+├── Present interactive modal (Option A via ask_question) & AWAIT APPROVAL
+└── Persist .agents/blueprint.md & initialize .agents/.factory-state.json
                     │ (User Approval)
                     ▼
 Phase 4: PARALLEL GENERATION & CODIFICATION
@@ -92,13 +93,14 @@ Phase 4: PARALLEL GENERATION & CODIFICATION
 Phase 5: INDEPENDENT QUALITY AUDIT & DELIVERY
 ├── agent-auditor-validator (Strictly read-only inspection)
 ├── Validate schemas, paths, permissions, and token economy
-├── Remediation Circuit Breaker: Max 2 cycles (Halt on failure)
+├── Remediation Circuit Breaker: Max 2 cycles tracked in state
 └── Deliver clean, tested plugin package to user
                     │ (Sprint Complete or Friction Encountered)
                     ▼
 Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
 ├── Reflexion Post-Mortem: Extract friction, remediation causes, and anti-patterns
-├── Tier 1: Ingest negative constraints into .agents/rules/project-learnings.md
+├── Anti-Poisoning & Conflict Check: Verify validity & non-contradiction
+├── Tier 1: Ingest negative constraints into .agents/rules/project-learnings.md (<100 lines)
 ├── Tier 2: Package novel procedural solutions into .agents/skills/<new-skill>/
 └── Tier 3: Persona mutation (Strict Option A user approval via ask_question)
 ```
@@ -110,14 +112,18 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
 ```text
 my-agent-factory/
 ├── plugin.json                    # Antigravity Plugin Manifest
+├── hooks.json                     # Antigravity Lifecycle Hooks (PreToolUse rubric protection)
 ├── README.md                      # System manual & developer onboarding (this file)
+│
+├── scripts/                       # Native execution & safety hook scripts
+│   └── protect-rubric.sh          # Hard blocking of unauthorized rubric modifications
 │
 ├── rules/                         # Workspace-wide rules
 │   ├── verification.md            # Zero-guess policy & path integrity
-│   └── human-alignment-and-research.md # Alignment, complexity gate, research-first, model tiering & retro
+│   └── human-alignment-and-research.md # Alignment, ACS scoring, model tiering & retro
 │
 ├── agents/                        # Specialized Meta-Agent Personas
-│   ├── meta-agent-architect.md    # Lead Architect & Orchestrator (ask_question + research + retro)
+│   ├── meta-agent-architect.md    # Lead Architect (ask_question + state persistence + retro)
 │   ├── prompt-persona-engineer.md # Prompt & Persona Author
 │   ├── skill-workflow-designer.md # Skill & Progressive Disclosure Designer
 │   └── agent-auditor-validator.md # Independent QA Inspector (pure read-only)
@@ -125,7 +131,7 @@ my-agent-factory/
 ├── skills/                        # Packaged Meta-Skills
 │   └── agent-factory/
 │       ├── SKILL.md               # Progressive disclosure entry point
-│       ├── config.json            # Internal factory policy manifest
+│       ├── config.json            # Internal factory policy manifest (subagent data contract)
 │       ├── workflow.md            # 6-phase SOP lifecycle with circuit breaker & retro
 │       ├── system_prompt.md       # Operational directives & mental models
 │       └── references/            # Deep architectural references (phase-gated)
