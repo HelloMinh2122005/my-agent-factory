@@ -1,0 +1,14 @@
+{
+  "name": "example-plugin-name",
+  "version": "1.0.0",
+  "description": "Short description of the domain capabilities provided by this plugin.",
+  "author": {
+    "name": "Your Team or Name",
+    "email": "dev@example.com"
+  },
+  "keywords": [
+    "example",
+    "domain",
+    "antigravity"
+  ]
+}

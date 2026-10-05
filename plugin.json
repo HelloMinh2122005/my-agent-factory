@@ -1,0 +1,19 @@
+{
+  "name": "agent-factory",
+  "version": "1.0.0",
+  "description": "Meta-Agent Engineering & Squad Factory for Google Antigravity. Architect, research, design, and validate enterprise-grade AI agents, skills, and plugins.",
+  "author": {
+    "name": "HelloMinh2122005",
+    "email": "phandinhminh48@gmail.com"
+  },
+  "keywords": [
+    "antigravity",
+    "meta-agent",
+    "agent-factory",
+    "squad-orchestration",
+    "prompt-engineering",
+    "skill-design",
+    "multi-agent",
+    "gemini"
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "$schema": "https://antigravity.google/schemas/agent-skill-config.v1.json",
+  "name": "agent-factory",
+  "version": "1.0.0",
+  "description": "Meta-Agent engineering and squad generation skill for Google Antigravity. Architect, research, design, and validate enterprise-grade AI agents, skills, and plugins.",
+  "type": "meta-agent-skill",
+  "triggers": {
+    "intent": [
+      "create_new_agent",
+      "design_agent_squad",
+      "build_antigravity_plugin",
+      "author_agent_skill",
+      "audit_agent_manifests",
+      "scaffold_agent_workflow"
+    ],
+    "keywords": [
+      "agent factory",
+      "create agent",
+      "new agent",
+      "subagent",
+      "agent squad",
+      "design agent",
+      "antigravity plugin",
+      "skill.md",
+      "plugin.json",
+      "prompt engineering",
+      "meta-agent"
+    ],
+    "file_patterns": [
+      ".agents/**/*.md",
+      ".agents/**/plugin.json",
+      ".agents/**/config.json",
+      "plugins/**/*.md",
+      "plugins/**/plugin.json",
+      "skills/**/SKILL.md"
+    ]
+  },
+  "agents": {
+    "meta-agent-architect": {
+      "role": "Lead Meta-Agent Architect & Squad Orchestrator",
+      "definition": "agents/meta-agent-architect.md",
+      "model": "pro",
+      "tools": [
+        "search_web",
+        "read_url_content",
+        "view_file",
+        "write_to_file",
+        "replace_file_content",
+        "run_command",
+        "grep_search",
+        "list_dir"
+      ]
+    },
+    "prompt-persona-engineer": {
+      "role": "Prompt & Persona Engineering Specialist",
+      "definition": "agents/prompt-persona-engineer.md",
+      "model": "pro",
+      "tools": [
+        "view_file",
+        "write_to_file",
+        "replace_file_content",
+        "multi_replace_file_content",
+        "grep_search",
+        "list_dir"
+      ]
+    },
+    "skill-workflow-designer": {
+      "role": "Skill & Workflow Specialist",
+      "definition": "agents/skill-workflow-designer.md",
+      "model": "flash",
+      "tools": [
+        "view_file",
+        "write_to_file",
+        "replace_file_content",
+        "multi_replace_file_content",
+        "grep_search",
+        "list_dir"
+      ]
+    },
+    "agent-auditor-validator": {
+      "role": "Agent QA, Schema & Compatibility Auditor",
+      "definition": "agents/agent-auditor-validator.md",
+      "model": "pro",
+      "tools": [
+        "view_file",
+        "grep_search",
+        "run_command",
+        "list_dir"
+      ]
+    }
+  },
+  "orchestration": {
+    "protocol": "meta_agent_factory_pipeline",
+    "co_pilot_approval_gate_mandatory": true,
+    "research_first_mandatory": true,
+    "phases": [
+      "USER_ALIGNMENT_AND_INTENT_EXTRACTION",
+      "OPEN_SOURCE_PRIOR_ART_RESEARCH",
+      "ARCHITECTURAL_PROPOSAL_AND_CO_PILOT_GATE",
+      "PARALLEL_PERSONA_AND_SKILL_AUTHORING",
+      "INDEPENDENT_AUDIT_AND_SIGN_OFF"
+    ]
+  },
+  "policies": {
+    "human_alignment": {
+      "step_1_required": true,
+      "no_premature_generation": true,
+      "ask_clarifying_questions": true
+    },
+    "prior_art_research": {
+      "step_2_required": true,
+      "benchmarks": [
+        "MetaGPT SOPs",
+        "Anthropic Building Effective Agents",
+        "ROMA Recursive Meta-Agent",
+        "LangGraph State Machines",
+        "DSPy & Trajectory Evaluation"
+      ],
+      "prohibit_reinventing_the_wheel": true
+    },
+    "co_pilot_gate": {
+      "option_a_enforced": true,
+      "await_user_approval": true
+    },
+    "model_selection": {
+      "ask_user_first": true,
+      "subscription_aware_default": {
+        "antigravity_pro": {
+          "execution_agents": "gemini-3.8-flash",
+          "reasoning_and_auditing_agents": "gemini-pro"
+        }
+      }
+    },
+    "security_and_hygiene": {
+      "least_privilege_enforced": true,
+      "auditors_read_only_strictly": true,
+      "no_machine_local_paths": true,
+      "progressive_disclosure_enforced": true
+    }
+  }
+}
