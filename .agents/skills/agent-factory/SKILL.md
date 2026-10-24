@@ -47,7 +47,7 @@ Read only the reference file mapped to your current workflow phase:
 ## 3. Quick Execution Summary
 
 1. **Step 1 — Understand User & Complexity Gate**: Triage whether the need requires a Single Rule, Single Skill, or Full Multi-Agent Squad before authoring code.
-2. **Step 2 — Research Prior Art**: Search open-source projects and industry standards to reuse proven patterns rather than reinventing the wheel.
+2. **Step 2 — Inherit the World's Knowledge**: Search GitHub and community libraries for existing skills, agents and plugins, then install → adapt → reference → author (only with a reason); also reuse proven patterns.
 3. **Step 3 — Option A Approval Gate**: Propose the architectural blueprint (Roles, Models, Tools, File Tree) and obtain user confirmation via `ask_question`.
 4. **Step 4 — Parallel Authoring**: Delegate persona generation to `prompt-persona-engineer` and skill runbooks to `skill-workflow-designer`.
 5. **Step 5 — Independent QA Audit**: Verify schemas, links, and permissions via `agent-auditor-validator` (strictly read-only; max 2 remediation cycles).

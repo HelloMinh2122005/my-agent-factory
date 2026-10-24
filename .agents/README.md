@@ -19,8 +19,9 @@ Instead of manually drafting prompts and guessing directory structures, the Agen
 │    Comprehend domain constraints. Apply Anthropic Rule #1 ("Start Simple"): │
 │    Single Rule vs Single Skill vs Multi-Agent Squad before authoring code.  │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 2. STAND ON THE SHOULDERS OF GIANTS (Step 2 - Never Reinvent the Wheel)     │
-│    Synthesize battle-tested open-source architectures (MetaGPT SOPs,        │
+│ 2. INHERIT THE WORLD'S KNOWLEDGE (Step 2 - Never Reinvent the Wheel)        │
+│    Find community skills, agents & plugins on GitHub first: install →       │
+│    adapt → reference → author. Plus proven patterns (MetaGPT SOPs,          │
 │    Anthropic Patterns, ROMA, LangGraph State Machines, G-Eval Rubrics).     │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 3. INTERACTIVE CO-PILOT APPROVAL GATE (Option A via ask_question)           │
@@ -49,13 +50,14 @@ Instead of manually drafting prompts and guessing directory structures, the Agen
 
 ## 2. The Agent Factory Squad
 
-The system is powered by four specialized meta-agent personas:
+The system is powered by five specialized meta-agent personas:
 
 | Agent Persona | Role & Responsibilities | Model Tier | Tool Permissions |
 | :--- | :--- | :--- | :--- |
 | **`@meta-agent-architect`** | **Lead Meta-Architect & Orchestrator**: Ingests user domain needs, assesses quantitative complexity, conducts open-source research, decomposes domain into single-responsibility roles, determines model tiering, writes the Blueprint and session state to the Blackboard, leads Phase 6 retrospectives, and manages the interactive Co-Pilot approval gate. | `pro` | Interactive UI (`ask_question`), Web Search, Inspection, Blueprint & State Authoring *(Strictly zero application code-write)* |
 | **`@prompt-persona-engineer`** | **Persona & Behavior Specialist**: Drafts high-density system prompts, mental models, inviolable directives, edge-case mitigation protocols, and deterministic output contracts. | `pro` | Code & Filesystem Authoring Tools |
 | **`@skill-workflow-designer`** | **Skill & Workflow Specialist**: Packages domain knowledge into Antigravity `skills/` using progressive disclosure (`SKILL.md` + modular `references/`), authors SOP `workflow.md`, scaffolds harvested skills from retrospectives, and configures internal manifests. | `flash` *(Pro default)* | Code & Filesystem Authoring Tools |
+| **`@github-repo-scout`** | **GitHub Repo Scout**: One job — searches GitHub for repositories (skills, agents, plugins, squads) that already solve a need and ranks them with a shared evidence-based rubric (fit, platform, adoption, maintenance, license, safety); requests Claude's peer review of every ranking. A Claude Code twin with the same skill is part of the Claude factory squad (workspace `.claude/agents/`). | `flash` | Web Search, read-only `gh`/GitHub API via `run_command`, writes only `.research/` and `.peer-review/` |
 | **`@agent-auditor-validator`** | **Independent QA & Compliance Inspector**: Validates YAML frontmatter, checks JSON schemas, verifies tool least-privilege, and checks relative link integrity. Strictly read-only to prevent cognitive bias. | `pro` | Inspection Only (`view_file`, `grep_search`, `list_dir`) *(Strictly zero write/bash)* |
 
 ---
@@ -71,10 +73,11 @@ Phase 1: USER ALIGNMENT & QUANTITATIVE COMPLEXITY GATE (ask_question)
 └── Anthropic Rule #1 & ACS Score: Rule vs Skill vs Specialist vs Squad
                     │
                     ▼
-Phase 2: OPEN-SOURCE PRIOR ART RESEARCH
-├── Search authoritative sources & GitHub repos
+Phase 2: INHERIT THE WORLD'S KNOWLEDGE (PRIOR ART)
+├── Search GitHub, marketplaces & community skill libraries
+├── Read & risk-check; install → adapt → reference → author
 ├── Benchmark proven patterns (MetaGPT SOPs, Anthropic, ROMA)
-└── Document reusable benchmarks (No wheel-reinvention)
+└── Document the reuse plan with sources (No wheel-reinvention)
                     │
                     ▼
 Phase 3: ARCHITECTURAL BLUEPRINT, CO-PILOT GATE & BLACKBOARD PERSISTENCE
@@ -116,19 +119,26 @@ my-agent-factory/
 ├── README.md                      # System manual & developer onboarding (this file)
 │
 ├── scripts/                       # Native execution & safety hook scripts
-│   └── protect-rubric.sh          # Hard blocking of unauthorized rubric modifications
+│   ├── protect-rubric.sh          # Hard blocking of unauthorized rubric modifications
+│   ├── sync-vendor.sh             # Mirror community skill/agent libraries to ~/.agent-factory/vendor (read-only)
+│   └── vendor-manifest.json       # Which community repos to mirror, and why
 │
 ├── rules/                         # Workspace-wide rules
 │   ├── verification.md            # Zero-guess policy & path integrity
-│   └── human-alignment-and-research.md # Alignment, ACS scoring, model tiering & retro
+│   ├── human-alignment-and-research.md # Alignment, ACS scoring, model tiering & retro
+│   └── peer-review.md             # Always request Claude peer review after research / builds
 │
 ├── agents/                        # Specialized Meta-Agent Personas
 │   ├── meta-agent-architect.md    # Lead Architect (ask_question + state persistence + retro)
 │   ├── prompt-persona-engineer.md # Prompt & Persona Author
 │   ├── skill-workflow-designer.md # Skill & Progressive Disclosure Designer
+│   ├── github-repo-scout.md       # Searches & ranks GitHub repositories (prior art)
 │   └── agent-auditor-validator.md # Independent QA Inspector (pure read-only)
+
 │
 ├── skills/                        # Packaged Meta-Skills
+│   ├── github-repo-scout/         # Search & rank GitHub repos (shared with Claude Code)
+│   ├── peer-review/               # Cross-platform peer review over agent-chat (shared)
 │   └── agent-factory/
 │       ├── SKILL.md               # Progressive disclosure entry point
 │       ├── config.json            # Internal factory policy manifest (subagent data contract)
@@ -175,6 +185,17 @@ To use this factory in any project workspace:
    git clone https://github.com/HelloMinh2122005/my-agent-factory.git .agents/plugins/agent-factory
    ```
 2. Antigravity will automatically detect `plugin.json` and ingest the squad and skill into your pair-programming environment.
+
+### C. The Claude Code Squad (optional partner)
+The my-agent-factory workspace also has a Claude Code squad in `.claude/` (next to this repository, not inside it): `factory-lead` (Opus 5.5 · xhigh), `github-repo-scout`, `claude-squad-engineer` and `peer-reviewer`. It runs the same 6-phase pipeline on its own, and shares the `github-repo-scout` and `peer-review` skills with this repo through symlinks.
+
+| You want | Claude Code | Antigravity |
+| :--- | :--- | :--- |
+| Build something with Claude | `/factory-lead new <use case>` | — |
+| Claude builds, Antigravity builds its side | `/factory-lead new <use case> paired` | `/check-message meta-agent-architect` (BUILD_REQUEST) |
+| Review requests and results | `/factory-lead` (lead) · `/check-message github-repo-scout` (research) | `/check-message meta-agent-architect` (builds) · `/check-message github-repo-scout` (research) |
+
+Peer review runs both ways over [agent-chat](https://github.com/HelloMinh2122005/chat-agent): research scout ⇄ scout, builds lead ⇄ lead (`claude-code/factory-lead` ⇄ `antigravity/meta-agent-architect`).
 
 ---
 

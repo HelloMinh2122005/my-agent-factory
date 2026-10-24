@@ -94,3 +94,22 @@ Grade the complete trajectory of the agent:
 - Did it respect directory boundaries?
 - Did it hallucinate non-existent files?
 - Is the output deterministic and consumable downstream?
+
+---
+
+## 5. Inherit the World's Knowledge: Community Skill, Plugin & Squad Libraries (install before you author)
+
+Patterns are not enough: the community already publishes ready-to-install skills, subagents and plugins for Claude Code and Antigravity. Phase 2 must search these **before** any persona or skill is written. A local read-only mirror lives in `~/.agent-factory/vendor/` (synced by `scripts/sync-vendor.sh` from `scripts/vendor-manifest.json`; set `AGENT_FACTORY_VENDOR` to mirror elsewhere). Antigravity file tools are sandboxed to the active workspace, so either read candidates directly from GitHub with `read_url_content`, or mirror into the workspace (e.g. `AGENT_FACTORY_VENDOR=.agents/vendor`, git-ignored).
+
+| Library | Platform | Use it for |
+| :--- | :--- | :--- |
+| [anthropics/skills](https://github.com/anthropics/skills) | Claude (Agent Skills standard) | official skills, `skill-creator` |
+| [obra/superpowers](https://github.com/obra/superpowers) | Claude | brainstorming → writing-plans → subagent-driven-development, writing-skills (pressure-testing skills), code-review loops |
+| [dsifry/metaswarm](https://github.com/dsifry/metaswarm) | Claude + Gemini + Codex | cross-model orchestration, parallel design-review gate (3-iteration cap), "never trust subagent self-reports", knowledge base |
+| [sickn33/antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills) | Antigravity + others | 2,700+ skills with `risk` ratings; search `skills_index.json` |
+| [rmyndharis/antigravity-skills](https://github.com/rmyndharis/antigravity-skills) | Antigravity | curated bundles ported from Claude agents |
+| [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) | all | catalog + per-platform install paths |
+| [VoltAgent/awesome-claude-code-subagents](https://github.com/VoltAgent/awesome-claude-code-subagents), [wshobson/agents](https://github.com/wshobson/agents) | Claude | ready subagents by domain |
+| [github/spec-kit](https://github.com/github/spec-kit) | many agents | spec → plan → tasks templates |
+
+Rules: read every file before installing; prefer instruction-only skills; record source URL, commit and license; keep the LICENSE next to any copied skill; watch always-on token cost (SessionStart hooks and skill descriptions load in every session).

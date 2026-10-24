@@ -1,0 +1,6 @@
+.DS_Store
+*.local.json
+.claude/settings.local.json
+.research/
+.peer-review/
+.factory/

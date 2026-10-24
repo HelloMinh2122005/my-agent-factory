@@ -49,6 +49,20 @@
         "list_dir"
       ]
     },
+    "github-repo-scout": {
+      "role": "GitHub Repo Scout — search and rank repositories for a need",
+      "definition": "agents/github-repo-scout.md",
+      "model": "flash",
+      "tools": [
+        "search_web",
+        "read_url_content",
+        "run_command",
+        "view_file",
+        "write_to_file",
+        "grep_search",
+        "list_dir"
+      ]
+    },
     "prompt-persona-engineer": {
       "role": "Prompt & Persona Engineering Specialist",
       "definition": "agents/prompt-persona-engineer.md",
@@ -133,7 +147,21 @@
         "Reflexion Verbal Self-Reflection",
         "Voyager Lifelong Skill Library"
       ],
-      "prohibit_reinventing_the_wheel": true
+      "prohibit_reinventing_the_wheel": true,
+      "inherit_world_knowledge": {
+        "search_community_artifacts_first": true,
+        "reuse_ladder": [
+          "install",
+          "adapt",
+          "reference",
+          "author"
+        ],
+        "author_requires_reason": true,
+        "read_before_reuse": true,
+        "keep_license_and_source": true,
+        "vendor_manifest": "scripts/vendor-manifest.json",
+        "vendor_dir": "~/.agent-factory/vendor"
+      }
     },
     "co_pilot_gate": {
       "option_a_enforced": true,
@@ -160,7 +188,11 @@
     "security_and_hygiene": {
       "least_privilege_enforced": true,
       "auditors_read_only_strictly": true,
-      "auditors_forbidden_tools": ["write_to_file", "replace_file_content", "run_command"],
+      "auditors_forbidden_tools": [
+        "write_to_file",
+        "replace_file_content",
+        "run_command"
+      ],
       "no_machine_local_paths": true,
       "progressive_disclosure_enforced": true,
       "rubric_immutability_hook_enforced": true
@@ -178,5 +210,30 @@
       "prompt_mutation_requires_human_approval": true,
       "rubric_immutability_enforced": true
     }
+  },
+  "peer_review": {
+    "skill": "skills/peer-review/SKILL.md",
+    "required_after": [
+      "research_report",
+      "agent_skill_or_squad_build"
+    ],
+    "routes": {
+      "research": "github-repo-scout <-> claude-code/github-repo-scout",
+      "build": "lead to lead: meta-agent-architect <-> claude-code/factory-lead"
+    },
+    "max_rounds": 2,
+    "advisory": true
+  },
+  "claude_factory_squad": {
+    "location": "my-agent-factory workspace .claude/ (outside this repo)",
+    "lead": "claude-code/factory-lead",
+    "agents": [
+      "factory-lead",
+      "github-repo-scout",
+      "claude-squad-engineer",
+      "peer-reviewer"
+    ],
+    "default_mode": "standalone",
+    "paired_mode_message": "BUILD_REQUEST"
   }
 }

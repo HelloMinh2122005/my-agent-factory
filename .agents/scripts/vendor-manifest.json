@@ -1,0 +1,15 @@
+{
+  "description": "Community repositories mirrored (shallow, read-only) into ~/.agent-factory/vendor for offline prior-art research. Nothing here is executed; installs happen only after a blueprint approves them.",
+  "vendor_dir": "~/.agent-factory/vendor",
+  "repos": [
+    { "repo": "anthropics/skills", "why": "official Agent Skills incl. skill-creator, mcp-builder" },
+    { "repo": "obra/superpowers", "why": "planning/execution/review workflow skills, writing-skills (skill TDD)" },
+    { "repo": "dsifry/metaswarm", "why": "cross-model Claude/Gemini/Codex orchestration, design-review gate, rubrics" },
+    { "repo": "sickn33/antigravity-awesome-skills", "why": "2,700+ skills with risk ratings and skills_index.json" },
+    { "repo": "rmyndharis/antigravity-skills", "why": "Antigravity-ported skill collection with bundles" },
+    { "repo": "VoltAgent/awesome-agent-skills", "why": "cross-platform skill catalog and install path table" },
+    { "repo": "VoltAgent/awesome-claude-code-subagents", "why": "Claude Code subagents by category" },
+    { "repo": "wshobson/agents", "why": "Claude Code plugin marketplace of agents and skills" },
+    { "repo": "github/spec-kit", "why": "spec-driven development templates (spec → plan → tasks)" }
+  ]
+}

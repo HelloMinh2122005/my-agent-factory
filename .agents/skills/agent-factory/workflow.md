@@ -16,10 +16,11 @@ Phase 1: USER ALIGNMENT & COMPLEXITY GATE (ask_question)
 └── Clarify ambiguities & constraints before proposing designs
                  │
                  ▼
-Phase 2: OPEN-SOURCE PRIOR ART RESEARCH
-├── Search authoritative sources & open-source repos
+Phase 2: INHERIT THE WORLD'S KNOWLEDGE (PRIOR ART)
+├── Search GitHub, marketplaces & community libraries for ready-made skills/agents/plugins
+├── Read & risk-check candidates; decide install → adapt → reference → author
 ├── Extract proven patterns (MetaGPT, Anthropic, ROMA, LangGraph)
-└── Document reusable benchmarks (Do NOT reinvent the wheel)
+└── Document the reuse plan with sources (Do NOT reinvent the wheel)
                  │
                  ▼
 Phase 3: ARCHITECTURAL BLUEPRINT & CO-PILOT GATE (Option A via ask_question)
@@ -34,8 +35,9 @@ Phase 4: PARALLEL GENERATION & CODIFICATION
 └── skill-workflow-designer -> SKILL.md, progressive disclosure, references/
                  │
                  ▼
-Phase 5: INDEPENDENT QUALITY AUDIT & DELIVERY
+Phase 5: INDEPENDENT QUALITY AUDIT, PEER REVIEW & DELIVERY
 ├── agent-auditor-validator (Strictly read-only inspection)
+├── Cross-platform peer review by Claude Code via agent-chat (≤2 rounds)
 ├── Validate schemas, paths, permissions, and token economy
 ├── Remediation Circuit Breaker: Max 2 cycles (Halt on failure)
 └── Deliver clean, tested plugin package to user
@@ -68,12 +70,15 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
 4. **Formulate Clarification Questions**: If requirements are ambiguous, prompt the user via `ask_question`.
 *Exit Criteria*: Confirmed ACS score, clear scope, and consensus on architectural tier.
 
-### Phase 2: Open-Source Prior Art Research
-*Mandatory Reference*: [Open-Source Prior Art & Foundations](./references/open-source-prior-art.md)
-1. **Search Repositories & Research Papers**: Use `search_web` to review how leading open-source projects solve this domain.
-2. **Benchmark SOPs & Workflows**: Check MetaGPT, Anthropic patterns, LangGraph state-machine patterns, or LLM-as-a-judge rubric strategies.
-3. **Synthesize Findings**: Identify 2-3 standard practices to adopt and document them in the architectural dossier.
-*Exit Criteria*: Established set of reusable open-source benchmarks; zero duplicate wheel-reinvention.
+### Phase 2: Inherit the World's Knowledge (Prior Art)
+*Mandatory Reference*: [Open-Source Prior Art & Foundations](./references/open-source-prior-art.md) (§5 lists the community libraries)
+1. **Search for Existing Artifacts**: Delegate to `github-repo-scout` (skill `github-repo-scout`), which searches and ranks GitHub repositories with the shared rubric and writes `.research/<YYYYMMDD>-<slug>/repos-antigravity.md`. Supplement with `search_web` / `read_url_content` on GitHub, plugin marketplaces and the community libraries (local mirror: `scripts/sync-vendor.sh` → `~/.agent-factory/vendor/`) for skills, agents and plugins that already solve each need.
+2. **Read & Risk-Check**: Read every candidate file. Flag session-wide context injection, bundled scripts, network calls, credential access and instruction-override language; note license, last update and always-on token cost.
+3. **Decide per Need (Reuse Ladder)**: install as-is → adapt a copy (keep LICENSE + `SOURCE.txt` with URL and commit) → reference the pattern → author new only with a written reason.
+4. **Benchmark SOPs & Workflows**: Check MetaGPT, Anthropic patterns, LangGraph state-machine patterns, or LLM-as-a-judge rubric strategies.
+5. **Write the Reuse Plan**: List every installed, adapted, referenced and authored item with its source in the architectural dossier.
+6. **Peer Review the Research**: `github-repo-scout` requests a review of its ranking from `claude-code/github-repo-scout` (skill `peer-review`); fold accepted findings into the reuse plan before Phase 3.
+*Exit Criteria*: Every need maps to a reuse decision with a source, or to "author new" with a reason; zero duplicate wheel-reinvention.
 
 ### Phase 3: Architectural Blueprint, Co-Pilot Gate (Option A) & Blackboard State Persistence
 *Mandatory Reference*: [Subscription-Aware Model Tiering Guide](./references/model-tiering-guide.md)
@@ -120,7 +125,8 @@ Phase 6: RETROSPECTIVE & CONTINUOUS SELF-EVOLUTION
    - Read and increment `remediation_cycle` in `.agents/.factory-state.json`.
    - *Cycle 1*: Authoring agents remediate reported deficiencies.
    - *Cycle 2*: Validator re-inspects. If checks still fail (`remediation_cycle >= 2`), **HALT immediately** (`HALT_REMEDIATION`). Do not continue looping. Escalate unresolved issues to the user via `ask_question`.
-3. **Final Delivery Dossier**: Present the verified plugin tree and usage instructions to the user.
+3. **Cross-Platform Peer Review**: After the auditor PASS, send `PEER_REVIEW_REQUEST` lead to lead to `claude-code/factory-lead` (skill `peer-review`); address BLOCKER/MAJOR findings within ≤2 rounds.
+4. **Final Delivery Dossier**: Present the verified plugin tree, usage instructions and the peer reviewer's verdict to the user.
 *Exit Criteria*: Unanimous PASS from `agent-auditor-validator` or user override upon Circuit Breaker halt.
 
 ### Phase 6: Retrospective & Continuous Self-Evolution
